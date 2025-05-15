@@ -78,6 +78,7 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
       return res.json({ text: content });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message || 'Erro desconhecido no backend' });
   }
 });
