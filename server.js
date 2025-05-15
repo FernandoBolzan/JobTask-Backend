@@ -5,6 +5,7 @@ import multer from 'multer';
 import FormData from 'form-data';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -12,6 +13,11 @@ const app = express();
 app.use(express.json());
 
 const upload = multer();
+
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://seu-dominio.com'], // adicione outros domínios se necessário
+  credentials: true
+}));
 
 app.post('/api/openai-proxy', upload.any(), async (req, res) => {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
