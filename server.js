@@ -15,7 +15,7 @@ app.use(express.json());
 const upload = multer();
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://seu-dominio.com'], // adicione outros domínios se necessário
+  origin: ['http://localhost:3000', 'https://jobtask.pro'], // adicione outros domínios se necessário
   credentials: true
 }));
 
@@ -83,11 +83,11 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
 });
 
 // (Opcional) Servir frontend buildado pelo backend
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use(express.static(path.join(__dirname, 'dist')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// app.use(express.static(path.join(__dirname, 'dist')));
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`)); 
