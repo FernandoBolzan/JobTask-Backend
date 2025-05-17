@@ -10,7 +10,7 @@ import cors from 'cors';
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Suporta payloads grandes para imagens
 
 const upload = multer();
 
@@ -26,6 +26,7 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
   try {
     let openaiRes;
     let isAudio = false;
+    // Áudio (Whisper)
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       isAudio = true;
       const form = new FormData();
@@ -54,6 +55,8 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
         body: form
       });
     } else {
+      // Texto ou multimodal (imagem/carrossel)
+      // O frontend já envia o payload correto para multimodal (gpt-4-vision-preview)
       if (!req.body.model) req.body.model = 'gpt-3.5-turbo';
       openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -91,4 +94,4 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
 // });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`)); 
+app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
