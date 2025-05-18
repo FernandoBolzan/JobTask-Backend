@@ -3,19 +3,17 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import FormData from 'form-data';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
-app.use(express.json({ limit: '10mb' })); // Suporta payloads grandes para imagens
+app.use(express.json({ limit: '10mb' }));
 
 const upload = multer();
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://jobtask.pro'], // adicione outros domínios se necessário
+  origin: ['http://localhost:3000', 'https://jobtask.pro'],
   credentials: true
 }));
 
@@ -26,7 +24,6 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
   try {
     let openaiRes;
     let isAudio = false;
-    // Áudio (Whisper)
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       isAudio = true;
       const form = new FormData();
@@ -55,9 +52,10 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
         body: form
       });
     } else {
-      // Texto ou multimodal (imagem/carrossel)
-      // O frontend já envia o payload correto para multimodal (gpt-4-vision-preview)
-      if (!req.body.model) req.body.model = 'gpt-3.5-turbo';
+      // LOG PARA DEBUG
+      console.log('Payload recebido:', JSON.stringify(req.body, null, 2));
+      // NÃO sobrescrever model se já veio do frontend
+      // if (!req.body.model) req.body.model = 'gpt-3.5-turbo';
       openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -85,13 +83,6 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
     res.status(500).json({ error: err.message || 'Erro desconhecido no backend' });
   }
 });
-
-// (Opcional) Servir frontend buildado pelo backend
-// const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// app.use(express.static(path.join(__dirname, 'dist')));
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
