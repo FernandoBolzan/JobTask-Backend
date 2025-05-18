@@ -24,6 +24,8 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
   try {
     let openaiRes;
     let isAudio = false;
+
+    // Áudio (Whisper)
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       isAudio = true;
       const form = new FormData();
@@ -54,8 +56,6 @@ app.post('/api/openai-proxy', upload.any(), async (req, res) => {
     } else {
       // LOG PARA DEBUG
       console.log('Payload recebido:', JSON.stringify(req.body, null, 2));
-      // NÃO sobrescrever model se já veio do frontend
-      // if (!req.body.model) req.body.model = 'gpt-3.5-turbo';
       openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
