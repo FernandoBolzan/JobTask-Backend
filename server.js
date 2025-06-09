@@ -13,7 +13,12 @@ app.use(express.json({ limit: '10mb' }));
 const upload = multer();
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://jobtask.pro'],
+  origin: [
+    'https://jobtaskpro.netlify.app',
+    'https://jobtask.pro',
+    'http://localhost:3000'
+  ],
+  methods: ['POST', 'GET', 'OPTIONS'],
   credentials: true
 }));
 
